@@ -19,19 +19,12 @@ public class RecruitUserInfoService {
     @Autowired
     private RecruitUserInfoDAO swRecruitUserInfoDao;
 
-    public List<RecruitUserInfo> queryRecruitUserInfo() {
-        return swRecruitUserInfoDao.queryRecruitUserInfo();
-    }
-
-    public void addRecruitUserInfo(RecruitUserInfo item) {
-        swRecruitUserInfoDao.addRecruitUserInfo(item);
-    }
-
-    public void deleteRecruitUserInfo(String rowId) {
-        swRecruitUserInfoDao.deleteRecruitUserInfo(rowId);
-    }
-
-    public void updateRecruitUserInfo(RecruitUserInfo item) {
-        swRecruitUserInfoDao.updateRecruitUserInfo(item);
+    /**
+     * 查看手机号是否已近存在
+     * @param telephone
+     * @return true ==> 不存在，反之
+     */
+    public boolean queryIsPhoneExist(String telephone) {
+        return this.swRecruitUserInfoDao.queryIsPhoneExist(telephone);
     }
 }

@@ -1,5 +1,6 @@
 package com.cslg.recruit.user.service;
 
+import com.cslg.recruit.common.SHA256Util;
 import com.cslg.recruit.user.dao.RecruitRegisterDAO;
 import com.cslg.recruit.user.pojo.RecruitUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +29,14 @@ public class RecruitRegisterService {
      */
     public boolean queryRecruitUserAccount(RecruitUserInfo item) {
         return this.recruitRegisterDAO.queryRecruitUserAccount(item);
+    }
+
+    /**
+     * 注册账号
+     * @param item
+     */
+    public void addRecruitUserInfo(RecruitUserInfo item) {
+        item.setUserPassword(SHA256Util.getSHA256(item.getUserPassword()));
+        this.recruitRegisterDAO.addRecruitUserInfo(item);
     }
 }

@@ -3,9 +3,9 @@ package com.cslg.recruit.user.dao;
 import com.cslg.recruit.user.pojo.RecruitUserInfo;
 import com.definesys.mpaas.log.SWordLogger;
 import com.definesys.mpaas.query.MpaasQueryFactory;
-import com.definesys.mpaas.query.db.PageQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -26,35 +26,13 @@ public class RecruitUserInfoDAO {
     @Autowired
     private SWordLogger logger;
 
-    public List<RecruitUserInfo> queryRecruitUserInfo() {
-        List<RecruitUserInfo> table = sw.buildQuery()
-                .doQuery(RecruitUserInfo.class);
-        return table;
+    /**
+     * 查看手机号是否已近存在
+     * @param telephone
+     * @return true ==> 不存在，反之
+     */
+    public boolean queryIsPhoneExist(String telephone) {
+        List<RecruitUserInfo> userPhoneNumber = sw.buildQuery().eq("userPhoneNumber", telephone).doQuery(RecruitUserInfo.class);
+        return CollectionUtils.isEmpty(userPhoneNumber);
     }
-
-    public PageQueryResult<RecruitUserInfo> pageQueryRecruitUserInfo(Integer page, Integer pageSize) {
-        return sw.buildQuery()
-                .doPageQuery(page, pageSize, RecruitUserInfo.class);
-    }
-
-    public Object addRecruitUserInfo(RecruitUserInfo item) {
-        Object key = sw.buildQuery()
-                .bind(item)
-                .doInsert();
-        return key;
-    }
-
-    public void deleteRecruitUserInfo(String rowId) {
-        sw.buildQuery()
-                .bind(RecruitUserInfo.class)
-                .addRowIdClause("id", "=", rowId)
-                .doDelete();
-    }
-
-    public void updateRecruitUserInfo(RecruitUserInfo item) {
-        sw.buildQuery()
-                .addRowIdClause("id", "=", item.getRowId())
-                .doUpdate(item);
-    }
-
 }

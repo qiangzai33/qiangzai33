@@ -34,4 +34,12 @@ public class RecruitRegisterDAO {
         List<RecruitUserInfo> users = sw.buildQuery().eq("userAccount", item.getUserAccount()).doQuery(RecruitUserInfo.class);
         return CollectionUtils.isEmpty(users);
     }
+
+    /**
+     * 注册账号
+     * @param item
+     */
+    public void addRecruitUserInfo(RecruitUserInfo item) {
+        sw.buildQuery().doInsert(item);
+    }
 }

@@ -1,13 +1,14 @@
 package com.cslg.recruit.user.controller;
 
-import com.cslg.recruit.user.pojo.RecruitUserInfo;
+import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.cslg.recruit.common.SmsUtil;
 import com.cslg.recruit.user.service.RecruitUserInfoService;
 import com.definesys.mpaas.common.http.Response;
-import com.definesys.mpaas.query.MpaasQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Copyright: Shanghai Definesys Company.All rights reserved.
@@ -16,51 +17,34 @@ import javax.servlet.http.HttpServletResponse;
  * @since: 2020-04-04
  * @history: 1.2020-04-04 created by XQQ
  */
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/RecruitUserInfo")
 public class RecruitUserInfoController {
-    @Autowired
-    private MpaasQueryFactory sw;
 
     @Autowired
     private RecruitUserInfoService serivce;
 
-    @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public Response queryRecruitUserInfo() {
-
-        return Response.ok().table(serivce.queryRecruitUserInfo());
+    @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
+    public Response sendMessage(@RequestBody String telephone) throws ClientException {
+        // 生成验证码
+        long timeMillis = System.currentTimeMillis();
+        int code = (int) (timeMillis % 1000000);
+        String toPhoneCode = String.valueOf(code);
+//        SendSmsResponse sendSmsResponse = SmsUtil.sendSms(JSONObject.parseObject(telephone).getString("telephone"), toPhoneCode);
+        SendSmsResponse sendSmsResponse = new SendSmsResponse();
+        sendSmsResponse.setBizId("1234");
+        return Response.ok().data(sendSmsResponse);
     }
-
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public Response addRecruitUserInfo(@RequestBody RecruitUserInfo item) {
-        serivce.addRecruitUserInfo(item);
-        return Response.ok();
-    }
-
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public Response deleteRecruitUserInfo(@RequestParam(value = "rowId") String rowId) {
-        serivce.deleteRecruitUserInfo(rowId);
-        return Response.ok();
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public Response updateRecruitUserInfo(@RequestBody RecruitUserInfo item) {
-        serivce.updateRecruitUserInfo(item);
-        return Response.ok();
-    }
-
 
     /**
-     * 导出excel
-     *
-     * @param response
-     * @return
+     * 查看手机号是否已近存在
+     * @param telephone
+     * @return true ==> 不存在，反之
      */
-    @RequestMapping(value = "/export", method = RequestMethod.GET)
-    public void export(HttpServletResponse response) {
-        sw.buildQuery()
-                .fileName("pojo.xlsx")
-                .doExport(response, RecruitUserInfo.class);
+    @RequestMapping(value = "/queryIsPhoneExist", method = RequestMethod.POST)
+    public Response queryIsPhoneExist(@RequestBody String telephone) {
+        boolean b = this.serivce.queryIsPhoneExist(JSONObject.parseObject(telephone).getString("telephone"));
+        return Response.ok().data(b);
     }
-
 }

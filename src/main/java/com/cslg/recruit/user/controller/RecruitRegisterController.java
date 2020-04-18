@@ -31,4 +31,15 @@ public class RecruitRegisterController {
         boolean b = this.recruitRegisterService.queryRecruitUserAccount(item);
         return Response.ok().data(b);
     }
+
+    /**
+     * 注册账号
+     * @param item
+     * @return
+     */
+    @RequestMapping(value = "/addRecruitUserInfo", method = RequestMethod.POST)
+    public Response addRecruitUserInfo(@RequestBody RecruitUserInfo item) {
+        this.recruitRegisterService.addRecruitUserInfo(item);
+        return Response.ok();
+    }
 }
